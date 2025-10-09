@@ -1,9 +1,9 @@
 import { AppSidebar } from "@/components/ui/dashboard/app-sidebar";
-import data from "./data.json";
+// import data from "./data.json";
 import { SectionCards } from "@/components/ui/dashboard/section-cards";
 import { SiteHeader } from "@/components/ui/dashboard/site-header";
-import { ChartAreaInteractive } from "@/components/ui/dashboard/chart-area-interactive";
-import { DataTable } from "@/components/ui/dashboard/data-table";
+// import { ChartAreaInteractive } from "@/components/ui/dashboard/chart-area-interactive";
+// import { DataTable } from "@/components/ui/dashboard/data-table";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export const MainDashboard = () => {
