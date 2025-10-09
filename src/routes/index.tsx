@@ -21,14 +21,14 @@ export const PrivateRoute = () => {
   return !UTILS.isEmptyObject(user ?? {}) ? (
     <Outlet />
   ) : (
-    <Navigate to="/auth" replace />
+    <Navigate to="/" replace />
   );
 };
 
 export const router = createBrowserRouter(
   [
     {
-      path: "/auth",
+      path: "/",
       element: <PublicRoute />,
       children: [
         {
