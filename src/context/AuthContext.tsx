@@ -31,14 +31,29 @@ export const AuthProvider = ({ children }) => {
         .eq("id", userId)
         .single();
 
-      if (error) {
-        setProfile(null);
-      } else {
-        setProfile(data);
-      }
+      if (error) setProfile(null);
+      else setProfile(data);
+
       setLoading(false);
     };
 
+    const getUserAndProfile = async () => {
+      // Obtener usuario actual (si ya está logueado)
+      const {
+        data: { user: currentUser },
+      } = await supabase.auth.getUser();
+
+      if (currentUser) {
+        setUser(currentUser);
+        fetchProfile(currentUser.id); // <- Llamada inmediata
+      } else {
+        setLoading(false);
+      }
+    };
+
+    getUserAndProfile();
+
+    // Suscribirse a cambios de sesión
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -50,9 +65,7 @@ export const AuthProvider = ({ children }) => {
       const authUser = session?.user ?? null;
       setUser(authUser);
 
-      if (authUser?.id) {
-        fetchProfile(authUser.id);
-      }
+      if (authUser?.id) fetchProfile(authUser.id);
     });
 
     return () => subscription.unsubscribe();

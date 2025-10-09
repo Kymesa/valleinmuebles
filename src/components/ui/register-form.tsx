@@ -55,7 +55,6 @@ export const RegisterForm = ({ ...props }: React.ComponentProps<"div">) => {
     setLoading(false);
     setEmail("");
     setPassword("");
-    window.location.reload();
 
     if (error) {
       return toasts("No se pudo resolver tu solicitud");
