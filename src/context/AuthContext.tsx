@@ -1,4 +1,3 @@
-// src/context/AuthContext.jsx
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
@@ -38,7 +37,6 @@ export const AuthProvider = ({ children }) => {
     };
 
     const getUserAndProfile = async () => {
-      // Obtener usuario actual (si ya está logueado)
       const {
         data: { user: currentUser },
       } = await supabase.auth.getUser();
@@ -53,7 +51,6 @@ export const AuthProvider = ({ children }) => {
 
     getUserAndProfile();
 
-    // Suscribirse a cambios de sesión
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
