@@ -5,7 +5,7 @@ import { SectionCards } from "@/components/ui/dashboard/section-cards";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { IconBell } from "@tabler/icons-react";
-import { RefreshCcwIcon } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   Empty,
