@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
 
       if (currentUser) {
         setUser(currentUser);
-        fetchProfile(currentUser.id); // <- Llamada inmediata
+        fetchProfile(currentUser.id);
       } else {
         setLoading(false);
       }

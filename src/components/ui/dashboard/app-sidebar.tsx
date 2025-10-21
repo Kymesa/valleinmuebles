@@ -6,7 +6,6 @@ import {
   IconFileWord,
   IconHelp,
   IconReport,
-  IconSettings,
 } from "@tabler/icons-react";
 
 import {
@@ -36,7 +35,7 @@ const data = {
   navMain: [
     {
       title: "Descubrir",
-      url: "#",
+      url: "/dashboard",
       icon: IconDashboard,
     },
   ],
@@ -45,13 +44,8 @@ const data = {
     "Configuraciones",
     [
       {
-        name: "Configuraciones",
-        url: "#",
-        icon: IconSettings,
-      },
-      {
         name: "Necesito ayuda",
-        url: "#",
+        url: "/help",
         icon: IconHelp,
       },
     ],
@@ -61,23 +55,11 @@ const data = {
     [
       {
         name: "Mi cuenta",
-        url: "#",
+        url: "/profile",
         icon: IconDatabase,
       },
-
       {
         name: "Propiedades favoritas",
-        url: "#",
-        icon: IconFileWord,
-      },
-      {
-        name: "Mensajes",
-        url: "#",
-        icon: IconDatabase,
-      },
-
-      {
-        name: "Notificaciones",
         url: "#",
         icon: IconFileWord,
       },
@@ -88,31 +70,16 @@ const data = {
     [
       {
         name: "Mi cuenta",
-        url: "#",
+        url: "/profile",
         icon: IconDatabase,
       },
       {
         name: "Publicaciones",
-        url: "#",
+        url: "/post",
         icon: IconReport,
       },
       {
-        name: "Estadisticas",
-        url: "#",
-        icon: IconChartBar,
-      },
-      {
         name: "Propiedades favoritas",
-        url: "#",
-        icon: IconFileWord,
-      },
-      {
-        name: "Mensajes",
-        url: "#",
-        icon: IconDatabase,
-      },
-      {
-        name: "Notificaciones",
         url: "#",
         icon: IconFileWord,
       },
@@ -123,12 +90,12 @@ const data = {
     [
       {
         name: "Mi cuenta",
-        url: "#",
+        url: "/profile",
         icon: IconDatabase,
       },
       {
         name: "Publicaciones",
-        url: "#",
+        url: "/post",
         icon: IconReport,
       },
       {
@@ -136,24 +103,9 @@ const data = {
         url: "#",
         icon: IconReport,
       },
-      {
-        name: "Estadisticas",
-        url: "#",
-        icon: IconChartBar,
-      },
-      {
-        name: "Propiedades favoritas",
-        url: "#",
-        icon: IconFileWord,
-      },
-      {
-        name: "Mensajes",
-        url: "#",
-        icon: IconDatabase,
-      },
 
       {
-        name: "Notificaciones",
+        name: "Propiedades favoritas",
         url: "#",
         icon: IconFileWord,
       },
@@ -168,19 +120,9 @@ const data = {
         icon: IconChartBar,
       },
       {
-        name: "Notificaciones",
-        url: "#",
-        icon: IconReport,
-      },
-      {
         name: "Control de usuarios",
         url: "#",
         icon: IconFileWord,
-      },
-      {
-        name: "Control de contenido",
-        url: "#",
-        icon: IconDatabase,
       },
     ],
   ],

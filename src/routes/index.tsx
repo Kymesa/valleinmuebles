@@ -4,6 +4,11 @@ import { Dashboard } from "@/screens/app/dashboard";
 import { Login } from "@/screens/app/auth";
 import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import { UTILS } from "@/constants/utils";
+import { Layout } from "@/layout";
+import { Help } from "@/screens/app/help";
+import { Profile } from "@/screens/app/profile";
+import { Post } from "@/screens/app/posts";
+import { CreatePost } from "@/screens/app/create-post";
 
 export const PublicRoute = () => {
   const { user } = useAuth();
@@ -19,7 +24,7 @@ export const PrivateRoute = () => {
   const { user } = useAuth();
 
   return !UTILS.isEmptyObject(user ?? {}) ? (
-    <Outlet />
+    <Layout />
   ) : (
     <Navigate to="/" replace />
   );
@@ -46,6 +51,22 @@ export const router = createBrowserRouter(
         {
           path: "dashboard",
           Component: Dashboard,
+        },
+        {
+          path: "profile",
+          Component: Profile,
+        },
+        {
+          path: "post",
+          Component: Post,
+        },
+        {
+          path: "create-post",
+          Component: CreatePost,
+        },
+        {
+          path: "help",
+          Component: Help,
         },
       ],
     },

@@ -7,6 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { NavLink } from "react-router";
 
 export function NavDocuments({ items }) {
   return (
@@ -15,12 +16,14 @@ export function NavDocuments({ items }) {
       <SidebarMenu>
         {items[1].map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
-                <span className="">{item.name}</span>
-              </a>
-            </SidebarMenuButton>
+            <NavLink to={item.url}>
+              <SidebarMenuButton asChild>
+                <div className="flex flex-row">
+                  <item.icon />
+                  <span className="">{item.name}</span>
+                </div>
+              </SidebarMenuButton>
+            </NavLink>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>

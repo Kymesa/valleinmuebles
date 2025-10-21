@@ -28,7 +28,7 @@ export const Comp404 = () => {
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
-        <Button onClick={() => navigate("/auth")} size="sm">
+        <Button onClick={() => navigate("/dashboard")} size="sm">
           <ChevronLeft />
           Volver al inicio
         </Button>
