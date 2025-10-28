@@ -85,6 +85,11 @@ const data = {
         icon: IconReport,
       },
       {
+        name: "Promocionar publicaciones",
+        url: "/promote",
+        icon: IconReport,
+      },
+      {
         name: "Propiedades favoritas",
         url: "/favorites",
         icon: IconFileWord,
@@ -106,13 +111,13 @@ const data = {
       },
       {
         name: "Promocionar publicaciones",
-        url: "/favorites",
+        url: "/promote",
         icon: IconReport,
       },
 
       {
         name: "Propiedades favoritas",
-        url: "#",
+        url: "/favorites",
         icon: IconFileWord,
       },
     ],

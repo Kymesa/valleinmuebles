@@ -18,6 +18,7 @@ import { Profile } from "@/screens/app/profile";
 import { Post } from "@/screens/app/posts";
 import { CreatePost } from "@/screens/app/create-post";
 import { Favorites } from "@/screens/app/favorites";
+import { Promote } from "@/screens/app/promote";
 
 export const PublicRoute = () => {
   const { user } = useAuth();
@@ -95,6 +96,10 @@ export const router = createBrowserRouter(
         {
           path: "chat/:id?",
           Component: Chat,
+        },
+        {
+          path: "promote",
+          Component: Promote,
         },
       ],
     },
