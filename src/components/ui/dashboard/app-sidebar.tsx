@@ -6,6 +6,7 @@ import {
   IconFileWord,
   IconHelp,
   IconReport,
+  IconMessageCircle,
 } from "@tabler/icons-react";
 
 import {
@@ -37,6 +38,11 @@ const data = {
       title: "Descubrir",
       url: "/dashboard",
       icon: IconDashboard,
+    },
+    {
+      title: "Mis Chats",
+      url: "/chats",
+      icon: IconMessageCircle,
     },
   ],
 
@@ -154,7 +160,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavDocuments items={data[String(profile?.user_type_id ?? 1)] as any} />
-        {/* <NavDocuments items={data.admin as any} /> */}
         <NavDocuments items={data.help as any} />
       </SidebarContent>
       <SidebarFooter>

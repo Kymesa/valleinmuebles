@@ -18,6 +18,7 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { toasts } from "../toast";
 import { CATALOGS } from "@/constants/catalog";
+import { HousePlug } from "lucide-react";
 
 export function NavUser({
   user,
@@ -48,10 +49,10 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:text-sidebar-accent-foreground outline-none"
             >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">V/par</AvatarFallback>
-              </Avatar>
+              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                <HousePlug className="size-5" color="#7168D3" />
+              </div>
+
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
                   {typeProfile ? profile[typeProfile]?.full_name : null}

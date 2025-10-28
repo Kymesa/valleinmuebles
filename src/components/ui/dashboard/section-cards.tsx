@@ -17,8 +17,41 @@ import {
 import { Spinner } from "../spinner";
 import { IconSave } from "../../../assets/icons/IconSave";
 import { IconDelete } from "@/assets/icons/IconDelete";
+import { useNavigate } from "react-router";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabaseClient";
 
 export const SectionCards = ({ post, profile, favorites }: any) => {
+  const navigate = useNavigate();
+  const { profile: authProfile } = useAuth();
+
+  const handleContact = async (property: any) => {
+    if (property.user_id === authProfile?.id) {
+      return;
+    }
+
+    try {
+      // Buscar si ya existe un chat con esta propiedad
+      const { data: existingChat, error } = await supabase
+        .from("chats")
+        .select("id")
+        .eq("property_id", property.id)
+        .eq("buyer_id", authProfile.id)
+        .single();
+
+      if (existingChat && !error) {
+        // Si existe el chat, navegar a él
+        navigate(`/chat/${existingChat.id}`);
+      } else {
+        // Si no existe, crear nuevo chat
+        navigate(`/chat/new?property=${property.id}`);
+      }
+    } catch (error) {
+      // Si hay error, intentar crear nuevo chat
+      navigate(`/chat/new?property=${property.id}`);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 gap-4 px-4  *:data-[slot=card]:shadow-[1px] *:data-[slot=card]:bg-[#7168D3]/10 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 rounded-md  border-none">
       {post?.map((property) => (
@@ -84,9 +117,9 @@ export const SectionCards = ({ post, profile, favorites }: any) => {
                 <Badge className="text-[10px] px-3 py-1 mt-2 bg-[#7168D3]">
                   💰 ${property.price.toLocaleString("es-CO")}
                 </Badge>
-                <div>
-                  <Badge className="text-[10px] px-2 py-1 bg-[#7168D3]">
-                    Contactar {property.profileType} 💬
+                <div onClick={() => handleContact(property)}>
+                  <Badge className="text-[10px] px-2 py-1 bg-[#7168D3] cursor-pointer hover:bg-[#5d57b5] transition-colors">
+                    Contactar {property.user_type?.name || ""} 💬
                   </Badge>
                 </div>
               </>

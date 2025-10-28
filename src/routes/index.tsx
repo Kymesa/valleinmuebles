@@ -2,7 +2,15 @@ import { useAuth } from "@/context/AuthContext";
 import { Comp404 } from "@/screens/app/404";
 import { Dashboard } from "@/screens/app/dashboard";
 import { Login } from "@/screens/app/auth";
-import { createBrowserRouter, Navigate, Outlet } from "react-router";
+import { LandingPage } from "@/screens/main";
+import { Chat } from "@/screens/app/chat";
+import { ChatsList } from "@/screens/app/chats-list";
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  useLocation,
+} from "react-router";
 import { UTILS } from "@/constants/utils";
 import { Layout } from "@/layout";
 import { Help } from "@/screens/app/help";
@@ -13,11 +21,16 @@ import { Favorites } from "@/screens/app/favorites";
 
 export const PublicRoute = () => {
   const { user } = useAuth();
+  const location = useLocation();
 
-  if (UTILS.isEmptyObject(user ?? {})) {
-    return <Outlet />;
+  if (
+    !UTILS.isEmptyObject(user ?? {}) &&
+    (location.pathname === "/" || location.pathname === "/auth")
+  ) {
+    return <Navigate to="/dashboard" replace />;
   }
-  return <Navigate to="/dashboard" replace />;
+
+  return <Outlet />;
 };
 
 export const PrivateRoute = () => {
@@ -38,6 +51,10 @@ export const router = createBrowserRouter(
       children: [
         {
           index: true,
+          Component: LandingPage,
+        },
+        {
+          path: "auth",
           Component: Login,
         },
       ],
@@ -70,6 +87,14 @@ export const router = createBrowserRouter(
         {
           path: "help",
           Component: Help,
+        },
+        {
+          path: "chats",
+          Component: ChatsList,
+        },
+        {
+          path: "chat/:id?",
+          Component: Chat,
         },
       ],
     },
