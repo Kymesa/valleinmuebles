@@ -34,7 +34,7 @@ export const Dashboard = () => {
       setLoadingPost(false);
     }
   };
-  console.log(post);
+
   useEffect(() => {
     getPosts();
   }, []);

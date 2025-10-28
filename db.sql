@@ -1,6 +1,5 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
-
 CREATE TABLE public.agency_profiles (
   id uuid NOT NULL,
   full_name text,

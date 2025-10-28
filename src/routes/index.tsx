@@ -13,20 +13,19 @@ import { CreatePost } from "@/screens/app/create-post";
 export const PublicRoute = () => {
   const { user } = useAuth();
 
-  if (!UTILS.isEmptyObject(user ?? {})) {
-    return <Navigate to="/dashboard" replace />;
+  if (UTILS.isEmptyObject(user ?? {})) {
+    return <Outlet />;
   }
-
-  return <Outlet />;
+  return <Navigate to="/dashboard" replace />;
 };
 
 export const PrivateRoute = () => {
   const { user } = useAuth();
 
-  return !UTILS.isEmptyObject(user ?? {}) ? (
-    <Layout />
-  ) : (
+  return UTILS.isEmptyObject(user ?? {}) ? (
     <Navigate to="/" replace />
+  ) : (
+    <Layout />
   );
 };
 
@@ -43,7 +42,6 @@ export const router = createBrowserRouter(
       ],
       ErrorBoundary: () => <Comp404 />,
     },
-
     {
       path: "/",
       element: <PrivateRoute />,
@@ -70,7 +68,6 @@ export const router = createBrowserRouter(
         },
       ],
     },
-
     {
       path: "*",
       element: <Comp404 />,

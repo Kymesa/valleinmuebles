@@ -69,7 +69,6 @@ export const Post = () => {
   useEffect(() => {
     getPosts();
   }, []);
-  console.log(post);
 
   if (loadingPost) {
     return <LoadingScreen />;
