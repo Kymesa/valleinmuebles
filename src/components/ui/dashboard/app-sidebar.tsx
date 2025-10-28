@@ -60,7 +60,7 @@ const data = {
       },
       {
         name: "Propiedades favoritas",
-        url: "#",
+        url: "/favorites",
         icon: IconFileWord,
       },
     ],
@@ -80,7 +80,7 @@ const data = {
       },
       {
         name: "Propiedades favoritas",
-        url: "#",
+        url: "/favorites",
         icon: IconFileWord,
       },
     ],
@@ -100,7 +100,7 @@ const data = {
       },
       {
         name: "Promocionar publicaciones",
-        url: "#",
+        url: "/favorites",
         icon: IconReport,
       },
 

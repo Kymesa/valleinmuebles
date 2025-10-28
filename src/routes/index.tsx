@@ -9,6 +9,7 @@ import { Help } from "@/screens/app/help";
 import { Profile } from "@/screens/app/profile";
 import { Post } from "@/screens/app/posts";
 import { CreatePost } from "@/screens/app/create-post";
+import { Favorites } from "@/screens/app/favorites";
 
 export const PublicRoute = () => {
   const { user } = useAuth();
@@ -61,6 +62,10 @@ export const router = createBrowserRouter(
         {
           path: "create-post",
           Component: CreatePost,
+        },
+        {
+          path: "favorites",
+          Component: Favorites,
         },
         {
           path: "help",

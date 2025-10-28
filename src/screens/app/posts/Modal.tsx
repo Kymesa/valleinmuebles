@@ -39,13 +39,13 @@ export const SpringModal = ({
               <div className="flex flex-row self-center items-center mx-auto w-full gap-2">
                 <Button
                   onClick={() => onClickDelete()}
-                  className="bg-transparent hover:bg-red-500 transition-colors text-white font-semibold py-2 rounded-3xl w-[50%]"
+                  className="bg-white hover:bg-red-500 hover:text-white transition-colors text-black font-semibold py-2 rounded-3xl w-[50%]"
                 >
                   Eliminar
                 </Button>
                 <Button
                   onClick={() => setIsOpen(false)}
-                  className="bg-[#7168D3] hover:opacity-90 transition-opacity font-semibold py-2 rounded text-white w-[50%]"
+                  className="bg-white hover:opacity-90 transition-opacity font-semibold py-2  text-black rounded-3xl  w-[50%] "
                 >
                   Volver
                 </Button>

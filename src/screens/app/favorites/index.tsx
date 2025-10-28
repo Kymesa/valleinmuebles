@@ -16,103 +16,91 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { SectionCards } from "@/components/ui/dashboard/section-cards";
-import { SpringModal } from "./Modal";
-export const Post = () => {
+import { SpringModal } from "../posts/Modal";
+import { toasts } from "@/components/ui/toast";
+
+export const Favorites = () => {
   const { profile } = useAuth();
-  const [loadingPost, setLoadingPost] = useState(false);
-  const [loadingDeletePost, setLoadingDeletePost] = useState(false);
-  const [post, setPost] = useState([]);
+  const [loadingFavorites, setLoadingFavorites] = useState(false);
+  const [loadingDeleteFavorite, setLoadingDeleteFavorite] = useState(false);
+  const [favorites, setFavorites] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [propertyDelete, setPropertyDelete] = useState(null);
-  const getPosts = async () => {
-    setLoadingPost(true);
+  const [propertyFavorite, setPropertyFavorite] = useState(null);
+  const getFavorites = async () => {
+    setLoadingFavorites(true);
     try {
-      const { data: post } = await supabase
-        .from("properties")
-        .select(
-          `*,
-            user_type (*),
-            property_type_id (*),
-            operation_type_id (*)`
-        )
-        .eq("user_id", profile?.id)
-        .order("created_at", { ascending: false });
-      setPost(post);
-
-      setLoadingPost(false);
-    } catch (error) {
-      setLoadingPost(false);
-    }
-  };
-
-  const onDeletePost = (property) => {
-    setIsOpen(true);
-    setPropertyDelete(property);
-  };
-
-  const onClickDelete = async () => {
-    setIsOpen(false);
-    setLoadingDeletePost(true);
-    try {
-      await supabase
-        .from("properties")
-        .delete()
-        .eq("id", propertyDelete.id)
-        .select();
-      setLoadingDeletePost(false);
-      getPosts();
-    } catch (error) {
-      setLoadingDeletePost(false);
-    }
-  };
-
-  const addFavorites = async (propertyId) => {
-    try {
-      setLoadingPost(true);
       const { data } = await supabase
         .from("favorites")
-        .insert([{ user_id: profile?.id, property_id: propertyId }]);
-      setLoadingPost(true);
-      console.log(data);
+        .select(
+          "property_id, properties(*,  property_type_id (*), operation_type_id (*),user_type (*) ) "
+        )
+        .eq("user_id", profile?.id);
+
+      const transform = data.map((item) => item.properties);
+
+      setFavorites(transform);
+
+      setLoadingFavorites(false);
     } catch (error) {
-      setLoadingPost(true);
+      setLoadingFavorites(false);
+    }
+  };
+
+  const onDeleteFavorite = (property) => {
+    setIsOpen(true);
+    setPropertyFavorite(property);
+  };
+
+  const onClickFavorite = async () => {
+    setIsOpen(false);
+    setLoadingDeleteFavorite(true);
+    try {
+      await supabase
+        .from("favorites")
+        .delete()
+        .eq("user_id", profile?.id)
+        .eq("property_id", propertyFavorite?.id)
+        .select();
+
+      setLoadingDeleteFavorite(false);
+      getFavorites();
+
+      toasts("Eliminado con exitosamente");
+    } catch (error) {
+      setLoadingDeleteFavorite(false);
     }
   };
 
   useEffect(() => {
-    getPosts();
+    getFavorites();
   }, []);
 
-  if (loadingPost) {
+  if (loadingFavorites) {
     return <LoadingScreen />;
   }
 
   return (
     <>
-      <SiteHeader title="Mis publicaciones" />
+      <SiteHeader title="Mis favoritos" />
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 w-full  ">
-            {post.length === 0 ? (
+            {favorites.length === 0 ? (
               <div className="flex w-full max-w-sm flex-col gap-6 mx-auto">
                 <Empty>
                   <EmptyHeader>
                     <EmptyMedia variant="icon">
                       <IconFolderCode />
                     </EmptyMedia>
-                    <EmptyTitle>No tienes publicaciones</EmptyTitle>
+                    <EmptyTitle>No tienes propiedade favoritas</EmptyTitle>
                     <EmptyDescription className="lg:w-2xl">
-                      ¡Crea tu primera publicación! Comparte tu inmueble con
-                      miles de personas en Valledupar.
-                    </EmptyDescription>
-
-                    <EmptyDescription className="lg:w-2xl">
-                      Sube fotos, agrega los detalles y publica en minutos.
+                      ¡Agrega tus propiedades favoritas! pronto alcanzaras tus
+                      metas...
                     </EmptyDescription>
                   </EmptyHeader>
                   <EmptyContent>
-                    <Link to={"/create-post"} className="flex gap-2">
-                      <Button>Nueva publicación</Button>
+                    <Link to={"/dashboard"} className="flex gap-2">
+                      <Button>Descubrir</Button>
                     </Link>
                   </EmptyContent>
                   <Button
@@ -129,12 +117,11 @@ export const Post = () => {
               </div>
             ) : (
               <SectionCards
-                post={post}
-                addFavorites={addFavorites}
-                profile={{
+                post={favorites}
+                favorites={{
+                  actionFavorite: onDeleteFavorite,
+                  loading: loadingDeleteFavorite,
                   isProfile: true,
-                  onDelete: onDeletePost,
-                  loadingDelete: loadingDeletePost,
                 }}
               />
             )}
@@ -144,8 +131,8 @@ export const Post = () => {
       <SpringModal
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        propertyDelete={propertyDelete}
-        onClickDelete={onClickDelete}
+        propertyDelete={propertyFavorite}
+        onClickDelete={onClickFavorite}
       />
     </>
   );

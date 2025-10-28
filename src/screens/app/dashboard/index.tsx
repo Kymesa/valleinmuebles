@@ -15,10 +15,13 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { toasts } from "@/components/ui/toast";
 export const Dashboard = () => {
-  const { loading } = useAuth();
+  const navigate = useNavigate();
+  const { loading, profile } = useAuth();
   const [loadingPost, setLoadingPost] = useState(false);
+  const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [post, setPost] = useState([]);
   const getPosts = async () => {
     setLoadingPost(true);
@@ -32,6 +35,23 @@ export const Dashboard = () => {
       setLoadingPost(false);
     } catch (error) {
       setLoadingPost(false);
+    }
+  };
+
+  const addFavorites = async (property) => {
+    try {
+      setLoadingFavorites(true);
+      const { error } = await supabase
+        .from("favorites")
+        .insert([{ user_id: profile?.id, property_id: property?.id }]);
+      setLoadingFavorites(false);
+      if (error?.code === "23505") {
+        return toasts("Ya esta agregada a favoritos");
+      }
+      toasts("Agregado con exito a favoritos");
+      navigate("/favorites");
+    } catch (error) {
+      setLoadingFavorites(false);
     }
   };
 
@@ -67,7 +87,13 @@ export const Dashboard = () => {
                 </EmptyContent>
               </Empty>
             ) : (
-              <SectionCards post={post} />
+              <SectionCards
+                post={post}
+                favorites={{
+                  actionFavorite: addFavorites,
+                  loading: loadingFavorites,
+                }}
+              />
             )}
 
             {/* <div className="px-4 lg:px-6">

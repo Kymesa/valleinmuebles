@@ -15,16 +15,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "../spinner";
+import { IconSave } from "../../../assets/icons/IconSave";
+import { IconDelete } from "@/assets/icons/IconDelete";
 
-export const SectionCards = ({ post, profile }: any) => {
+export const SectionCards = ({ post, profile, favorites }: any) => {
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-b *:data-[slot=card]:shadow-[1px] *:data-[slot=card]:bg-[#7168D3]/10 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 rounded-md  border-none ">
+    <div className="grid grid-cols-1 gap-4 px-4  *:data-[slot=card]:shadow-[1px] *:data-[slot=card]:bg-[#7168D3]/10 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 rounded-md  border-none">
       {post?.map((property) => (
         <Card
           key={property.id}
+          color="red"
+          style={{ backgroundColor: "white" }}
           className=" border-none  rounded-md w-fit transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:-translate-x-[5px] hover:-translate-y-[5px]"
         >
-          <div className="relative  h-48 w-full rounded-md">
+          <div className="relative h-48 w-[300px] rounded-md">
             <img
               src={property.images}
               alt={property.title}
@@ -102,6 +106,21 @@ export const SectionCards = ({ post, profile }: any) => {
                 </Badge>
               </div>
             )}
+
+            {favorites ? (
+              <div
+                onClick={() => favorites.actionFavorite(property)}
+                className="text-[10px] absolute -bottom-6 -right-2 px-3 py-1 cursor-pointer "
+              >
+                {profile?.loading ? (
+                  <Spinner className="mx-3" />
+                ) : favorites?.isProfile ? (
+                  <IconDelete />
+                ) : (
+                  <IconSave />
+                )}
+              </div>
+            ) : null}
           </CardFooter>
         </Card>
       ))}
