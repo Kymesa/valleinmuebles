@@ -8,6 +8,7 @@ import { useState } from "react";
 import { toasts } from "./toast";
 import { RadioGroup, RadioGroupItem } from "./radio-group";
 import { CATALOGS } from "@/constants/catalog";
+const API = import.meta.env.VITE_API;
 
 export const RegisterForm = ({ ...props }: React.ComponentProps<"div">) => {
   const [selectedUserTypeId, setSelectedUserTypeId] = useState(1);
@@ -30,39 +31,63 @@ export const RegisterForm = ({ ...props }: React.ComponentProps<"div">) => {
 
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    try {
+      const resp = await fetch(`${API}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const respApi = await resp.json();
 
-    await supabase.from("users_extended").insert({
-      id: data.user.id,
-      user_type_id: selectedUserTypeId,
-      auth_provider: data.user.app_metadata.provider,
-      profile_completed: false,
-    });
+      if (respApi?.status === "error") {
+        return toasts(respApi?.message);
+      }
 
-    await supabase
-      .from(CATALOGS.TABLES.PROFILES[selectedUserTypeId])
-      .insert({
-        id: data.user.id,
-        email: data.user.email,
-        full_name: fullName,
-      })
-      .select()
-      .single();
+      if (respApi?.status === "success") {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
 
-    setLoading(false);
-    setEmail("");
-    setPassword("");
+        await supabase.from("users_extended").insert({
+          id: data.user.id,
+          user_type_id: selectedUserTypeId,
+          auth_provider: data.user.app_metadata.provider,
+          profile_completed: false,
+        });
 
-    window.location.reload();
-    if (error) {
-      return toasts("No se pudo resolver tu solicitud");
-    }
+        await supabase
+          .from(CATALOGS.TABLES.PROFILES[selectedUserTypeId])
+          .insert({
+            id: data.user.id,
+            email: data.user.email,
+            full_name: fullName,
+          })
+          .select()
+          .single();
 
-    if (data) {
-      return toasts("Se creo la cuenta correctamente e inicia sesion");
+        setLoading(false);
+        setEmail("");
+        setPassword("");
+
+        window.location.reload();
+        if (error) {
+          return toasts("No se pudo resolver tu solicitud");
+        }
+
+        if (data) {
+          return toasts("Se creo la cuenta correctamente e inicia sesion");
+        }
+      }
+    } catch (error) {
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 

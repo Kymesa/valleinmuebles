@@ -17,6 +17,7 @@ import { useAuth } from "@/context/AuthContext";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { SectionCards } from "@/components/ui/dashboard/section-cards";
 import { SpringModal } from "./Modal";
+import { toasts } from "@/components/ui/toast";
 export const Post = () => {
   const { profile } = useAuth();
   const [loadingPost, setLoadingPost] = useState(false);
@@ -25,6 +26,10 @@ export const Post = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [propertyDelete, setPropertyDelete] = useState(null);
   const getPosts = async () => {
+    const token = localStorage.getItem("@token");
+    if (!token) {
+      return toasts("No hay token");
+    }
     setLoadingPost(true);
     try {
       const { data: post } = await supabase
@@ -51,6 +56,10 @@ export const Post = () => {
   };
 
   const onClickDelete = async () => {
+    const token = localStorage.getItem("my_api_token");
+    if (!token) {
+      return toasts("No hay token");
+    }
     setIsOpen(false);
     setLoadingDeletePost(true);
     try {
@@ -69,6 +78,10 @@ export const Post = () => {
   const addFavorites = async (propertyId) => {
     try {
       setLoadingPost(true);
+      const token = localStorage.getItem("@token");
+      if (!token) {
+        return toasts("No hay token");
+      }
       const { data } = await supabase
         .from("favorites")
         .insert([{ user_id: profile?.id, property_id: propertyId }]);

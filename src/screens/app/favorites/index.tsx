@@ -27,6 +27,10 @@ export const Favorites = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [propertyFavorite, setPropertyFavorite] = useState(null);
   const getFavorites = async () => {
+    const token = localStorage.getItem("@token");
+    if (!token) {
+      return toasts("No hay token");
+    }
     setLoadingFavorites(true);
     try {
       const { data } = await supabase

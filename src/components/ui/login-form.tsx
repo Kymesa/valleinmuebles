@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabaseClient";
 import { useState } from "react";
 import { toasts } from "./toast";
-
+const API = import.meta.env.VITE_API;
 export const LoginForm = ({ ...props }: React.ComponentProps<"div">) => {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
@@ -18,24 +18,47 @@ export const LoginForm = ({ ...props }: React.ComponentProps<"div">) => {
     if (password.length <= 5) {
       return toasts("La contraseña debe tener mas de 6 caracteres");
     }
-
     setLoading(true);
+    try {
+      const resp = await fetch(`${API}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const respApi = await resp.json();
+      if (respApi?.error) {
+        return toasts(respApi?.error);
+      }
+      if (respApi?.access_token) {
+        localStorage.setItem("@token", respApi?.access_token);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-    setLoading(false);
-    setEmail("");
-    setPassword("");
-    if (error) {
-      return toasts("No se pudo resolver tu solicitud");
+        setLoading(false);
+        setEmail("");
+        setPassword("");
+        if (error) {
+          return toasts("No se pudo resolver tu solicitud");
+        }
+
+        if (data) {
+          return toasts("Iniciaste sesion correctamente");
+        }
+      }
+    } catch (error) {
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
-
-    if (data) {
-      return toasts("Iniciaste sesion correctamente");
-    }
+    return;
   };
 
   return (

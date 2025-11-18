@@ -16,6 +16,7 @@ import {
 import { SiteHeader } from "@/components/ui/dashboard/site-header";
 import { Home } from "lucide-react";
 import { IconMessageCircle } from "@tabler/icons-react";
+import { toasts } from "@/components/ui/toast";
 
 const formatTimeAgo = (date: string) => {
   const now = new Date();
@@ -44,6 +45,10 @@ export const ChatsList = () => {
   }, [profile]);
 
   const fetchChats = async () => {
+    const token = localStorage.getItem("@token");
+    if (!token) {
+      return toasts("No hay token");
+    }
     setLoading(true);
     try {
       const { data: chatsData, error: chatsError } = await supabase

@@ -46,6 +46,10 @@ export const Chat = () => {
 
   const loadExistingChat = async (chatId) => {
     try {
+      const token = localStorage.getItem("@token");
+      if (!token) {
+        return toasts("No hay token");
+      }
       setLoading(true);
 
       const { data: chatData, error: chatError } = await supabase
@@ -117,6 +121,10 @@ export const Chat = () => {
 
   const initializeChat = async () => {
     try {
+      const token = localStorage.getItem("@token");
+      if (!token) {
+        return toasts("No hay token");
+      }
       const { data: propertyData, error: propertyError } = await supabase
         .from("properties")
         .select("*, user_id")
@@ -244,6 +252,10 @@ export const Chat = () => {
   };
 
   const fetchMessages = async (chatIdParam, showRefresh = false) => {
+    const token = localStorage.getItem("@token");
+    if (!token) {
+      return toasts("No hay token");
+    }
     try {
       if (showRefresh) setRefreshing(true);
 
@@ -270,6 +282,10 @@ export const Chat = () => {
   };
 
   const sendMessage = async () => {
+    const token = localStorage.getItem("@token");
+    if (!token) {
+      return toasts("No hay token");
+    }
     if (!message.trim() || !chatId) return;
 
     setSending(true);
