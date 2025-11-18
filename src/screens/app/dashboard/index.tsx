@@ -24,10 +24,6 @@ export const Dashboard = () => {
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [post, setPost] = useState([]);
   const getPosts = async () => {
-    const token = localStorage.getItem("@token");
-    if (!token) {
-      return toasts("No hay token");
-    }
     setLoadingPost(true);
     try {
       const { data: post } = await supabase.from("properties").select(`*,
@@ -43,10 +39,6 @@ export const Dashboard = () => {
   };
 
   const addFavorites = async (property) => {
-    const token = localStorage.getItem("@token");
-    if (!token) {
-      return toasts("No hay token");
-    }
     try {
       setLoadingFavorites(true);
       const { error } = await supabase

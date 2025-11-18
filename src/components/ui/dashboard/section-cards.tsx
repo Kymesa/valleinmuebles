@@ -33,10 +33,7 @@ export const SectionCards = ({ post, profile, favorites }: any) => {
 
     try {
       // Buscar si ya existe un chat con esta propiedad
-      const token = localStorage.getItem("@token");
-      if (!token) {
-        return toasts("No hay token");
-      }
+
       const { data: existingChat, error } = await supabase
         .from("chats")
         .select("id")

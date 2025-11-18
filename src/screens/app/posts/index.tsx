@@ -26,10 +26,6 @@ export const Post = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [propertyDelete, setPropertyDelete] = useState(null);
   const getPosts = async () => {
-    const token = localStorage.getItem("@token");
-    if (!token) {
-      return toasts("No hay token");
-    }
     setLoadingPost(true);
     try {
       const { data: post } = await supabase
@@ -78,10 +74,7 @@ export const Post = () => {
   const addFavorites = async (propertyId) => {
     try {
       setLoadingPost(true);
-      const token = localStorage.getItem("@token");
-      if (!token) {
-        return toasts("No hay token");
-      }
+
       const { data } = await supabase
         .from("favorites")
         .insert([{ user_id: profile?.id, property_id: propertyId }]);

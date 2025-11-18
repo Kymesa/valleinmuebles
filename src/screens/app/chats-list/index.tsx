@@ -45,10 +45,6 @@ export const ChatsList = () => {
   }, [profile]);
 
   const fetchChats = async () => {
-    const token = localStorage.getItem("@token");
-    if (!token) {
-      return toasts("No hay token");
-    }
     setLoading(true);
     try {
       const { data: chatsData, error: chatsError } = await supabase

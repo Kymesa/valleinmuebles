@@ -61,10 +61,6 @@ export const CreatePost = () => {
     }
   };
   const getNeedInformatioCreatePost = async () => {
-    const token = localStorage.getItem("@token");
-    if (!token) {
-      return toasts("No hay token");
-    }
     setLoading(true);
     try {
       const { data: operationType } = await supabase
@@ -82,10 +78,6 @@ export const CreatePost = () => {
   };
 
   const creatPost = async () => {
-    const token = localStorage.getItem("@token");
-    if (!token) {
-      return toasts("No hay token");
-    }
     setLoading(true);
     try {
       if (!imageFile) {
