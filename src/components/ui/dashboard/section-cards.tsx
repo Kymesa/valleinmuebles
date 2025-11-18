@@ -20,7 +20,6 @@ import { IconDelete } from "@/assets/icons/IconDelete";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
-import { toasts } from "../toast";
 
 export const SectionCards = ({ post, profile, favorites }: any) => {
   const navigate = useNavigate();

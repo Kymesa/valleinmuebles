@@ -16,7 +16,6 @@ import {
 import { SiteHeader } from "@/components/ui/dashboard/site-header";
 import { Home } from "lucide-react";
 import { IconMessageCircle } from "@tabler/icons-react";
-import { toasts } from "@/components/ui/toast";
 
 const formatTimeAgo = (date: string) => {
   const now = new Date();
