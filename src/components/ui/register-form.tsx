@@ -49,6 +49,8 @@ export const RegisterForm = ({ ...props }: React.ComponentProps<"div">) => {
       }
 
       if (respApi?.status === "success") {
+        localStorage.setItem("@token", respApi?.access_token);
+
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
