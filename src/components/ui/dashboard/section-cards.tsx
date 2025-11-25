@@ -118,6 +118,11 @@ export const SectionCards = ({ post, profile, favorites }: any) => {
                 <Badge className="text-[10px] px-3 py-1 mt-2 bg-[#7168D3]">
                   💰 ${property.price.toLocaleString("es-CO")}
                 </Badge>
+                {property.distance !== null && property.distance !== undefined && (
+                  <Badge variant="outline" className="text-[10px] px-3 py-1 mt-2 ml-2">
+                    📍 {property.distance.toFixed(1)} km
+                  </Badge>
+                )}
                 <div onClick={() => handleContact(property)}>
                   <Badge className="text-[10px] px-2 py-1 bg-[#7168D3] cursor-pointer hover:bg-[#5d57b5] transition-colors">
                     Contactar {property.user_type?.name || ""} 💬

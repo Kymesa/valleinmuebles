@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/select";
 import { toasts } from "@/components/ui/toast";
 import { useNavigate } from "react-router";
+import { LocationPicker } from "@/components/ui/location-picker";
+
 export const CreatePost = () => {
   const { profile } = useAuth();
   const navigate = useNavigate();
@@ -51,6 +53,8 @@ export const CreatePost = () => {
     contact_email: profile[typeClient(profile?.user_type_id)]?.email,
     property_type_id: 2,
     operation_type_id: 2,
+    latitude: null,
+    longitude: null,
   });
 
   const handleFileChange = (e) => {
@@ -100,7 +104,12 @@ export const CreatePost = () => {
         .from("Post")
         .getPublicUrl(fileName);
 
-      if (!Object.values(informationPost).every(Boolean)) {
+      // Check if essential fields are filled (latitude and longitude are optional but recommended)
+      const requiredFields = { ...informationPost };
+      delete requiredFields.latitude;
+      delete requiredFields.longitude;
+
+      if (!Object.values(requiredFields).every(Boolean)) {
         setLoading(false);
         return toasts("❌ Atencion, Llenar todos los campos");
       }
@@ -228,7 +237,7 @@ export const CreatePost = () => {
                           defaultValue={
                             profile
                               ? profile[typeClient(profile?.user_type_id)]
-                                  ?.email
+                                ?.email
                               : ""
                           }
                           value={informationPost.contact_email}
@@ -346,6 +355,17 @@ export const CreatePost = () => {
                         </Select>
                       </div>
                     </CardContent>
+
+                    <div className="grid mx-6 gap-3 mb-6">
+                      <Label>Ubicación del Inmueble</Label>
+                      <LocationPicker
+                        onLocationSelect={(lat, lng) =>
+                          setInformationPost(prev => ({ ...prev, latitude: lat, longitude: lng }))
+                        }
+                      />
+                      <p className="text-xs text-muted-foreground">Haz clic en el mapa para seleccionar la ubicación exacta.</p>
+                    </div>
+
                     <div className="grid mx-6 max-w-sm items-center gap-3">
                       <Label htmlFor="picture">Imagen del inmueble</Label>
                       <Input

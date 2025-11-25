@@ -15,28 +15,188 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { toasts } from "@/components/ui/toast";
+import { Filters } from "@/components/ui/dashboard/filters";
+
 export const Dashboard = () => {
   const navigate = useNavigate();
   const { loading, profile } = useAuth();
   const [loadingPost, setLoadingPost] = useState(false);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [post, setPost] = useState([]);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  const [filters, setFilters] = useState({
+    propertyType: "all",
+    operationType: "all",
+    minPrice: "",
+    maxPrice: "",
+    city: "",
+    nearMe: false,
+  });
+  const [propertyTypes, setPropertyTypes] = useState([]);
+  const [operationTypes, setOperationTypes] = useState([]);
+
+  useEffect(() => {
+    const fetchTypes = async () => {
+      const { data: pt } = await supabase.from("property_type").select("*");
+      const { data: ot } = await supabase.from("operation_type").select("*");
+      if (pt) setPropertyTypes(pt);
+      if (ot) setOperationTypes(ot);
+    };
+    fetchTypes();
+  }, []);
+
+  // Get user location with retry logic
+  const getUserLocation = () => {
+    if (!navigator.geolocation) {
+      toasts("Geolocalización no soportada en este navegador.");
+      return;
+    }
+
+    const optionsHighAccuracy = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    };
+
+    const optionsLowAccuracy = {
+      enableHighAccuracy: false,
+      timeout: 10000,
+      maximumAge: 30000, // Accept cached location up to 30s old
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      (error) => {
+        console.warn("High accuracy location failed, retrying with low accuracy...", error);
+        // Retry with low accuracy
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+          },
+          (error2) => {
+            console.error("Location error:", error2);
+            let msg = "No se pudo obtener tu ubicación.";
+            if (error2.code === 1) msg = "Permiso de ubicación denegado.";
+            if (error2.code === 2) msg = "Ubicación no disponible (intenta moverte o conectar a WiFi).";
+            if (error2.code === 3) msg = "Tiempo de espera agotado al obtener ubicación.";
+
+            toasts(msg);
+            setFilters((prev) => ({ ...prev, nearMe: false }));
+          },
+          optionsLowAccuracy
+        );
+      },
+      optionsHighAccuracy
+    );
+  };
+
+  useEffect(() => {
+    getUserLocation();
+  }, []);
+
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
+    return d;
+  };
+
+  const deg2rad = (deg: number) => {
+    return deg * (Math.PI / 180);
+  };
+
   const getPosts = async () => {
     setLoadingPost(true);
     try {
-      const { data: post } = await supabase.from("properties").select(`*,
+      let query = supabase.from("properties").select(`*,
           user_type (*),
           property_type_id (*),
           operation_type_id (*)`);
-      setPost(post);
 
+      if (filters.propertyType !== "all") {
+        query = query.eq("property_type_id", filters.propertyType);
+      }
+      if (filters.operationType !== "all") {
+        query = query.eq("operation_type_id", filters.operationType);
+      }
+      if (filters.minPrice && filters.minPrice !== "") {
+        query = query.gte("price", Number(filters.minPrice));
+      }
+      if (filters.maxPrice && filters.maxPrice !== "") {
+        query = query.lte("price", Number(filters.maxPrice));
+      }
+      if (filters.city) {
+        const text = `%${filters.city}%`;
+        query = query.or(
+          `city.ilike.${text},neighborhood.ilike.${text},address.ilike.${text},title.ilike.${text}`
+        );
+      }
+
+      const { data: postData, error } = await query;
+
+      if (error) throw error;
+
+      let processedPosts = postData.map(p => {
+        let distance = null;
+        if (userLocation && p.latitude && p.longitude) {
+          distance = calculateDistance(userLocation.lat, userLocation.lng, p.latitude, p.longitude);
+        }
+        return { ...p, distance };
+      });
+
+      if (filters.nearMe && userLocation) {
+        processedPosts = processedPosts.filter(p => p.distance !== null && p.distance <= 50); // Filter within 50km (large perimeter)
+        processedPosts.sort((a, b) => (a.distance || 0) - (b.distance || 0));
+      }
+
+      setPost(processedPosts);
       setLoadingPost(false);
     } catch (error) {
+      console.error(error);
       setLoadingPost(false);
     }
   };
+
+
+  // Re-fetch when location changes if nearMe is active, or just to update distances
+  useEffect(() => {
+    if (userLocation) {
+      getPosts();
+    }
+  }, [userLocation]);
+
+  // Trigger search when 'Near Me' filter changes
+  useEffect(() => {
+    if (filters.nearMe) {
+      if (!userLocation) {
+        getUserLocation();
+      } else {
+        getPosts();
+      }
+    } else {
+      // If turned off, re-fetch to show all
+      getPosts();
+    }
+  }, [filters.nearMe]);
+
 
   const addFavorites = async (property) => {
     try {
@@ -66,24 +226,41 @@ export const Dashboard = () => {
   return (
     <>
       <SiteHeader title="Descubrir" />
-      <div className="flex flex-1 flex-col">
-        <div className="@container/main flex flex-1 flex-col gap-2">
-          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+      <div className="flex flex-1 flex-col bg-gray-50/50 min-h-screen">
+        <div className="@container/main flex flex-1 flex-col gap-2 p-4 lg:p-6">
+
+          <Filters
+            filters={filters}
+            setFilters={setFilters}
+            propertyTypes={propertyTypes}
+            operationTypes={operationTypes}
+            onSearch={getPosts}
+          />
+
+          <div className="flex flex-col gap-4">
             {post.length === 0 ? (
-              <Empty className="from-muted/50 to-background h-full bg-gradient-to-b from-30%">
+              <Empty className="from-muted/50 to-background h-[400px] bg-gradient-to-b from-30% rounded-xl border-dashed border-2">
                 <EmptyHeader>
                   <EmptyMedia variant="icon" className="bg-[#7168D3]">
                     <IconBell color="white" />
                   </EmptyMedia>
-                  <EmptyTitle>No hay publicaciones recientes</EmptyTitle>
+                  <EmptyTitle>No hay publicaciones encontradas</EmptyTitle>
                   <EmptyDescription>
-                    Se el primero en publicar un inmueble en valle inmuebles
+                    Intenta ajustar los filtros para encontrar lo que buscas.
                   </EmptyDescription>
                 </EmptyHeader>
                 <EmptyContent>
-                  <Link to={"/create-post"} className="flex gap-2">
-                    <Button>Nueva publicación</Button>
-                  </Link>
+                  <Button onClick={() => {
+                    setFilters({
+                      propertyType: "all",
+                      operationType: "all",
+                      minPrice: "",
+                      maxPrice: "",
+                      city: "",
+                      nearMe: false,
+                    });
+                    getPosts();
+                  }}>Limpiar Filtros</Button>
                 </EmptyContent>
               </Empty>
             ) : (
@@ -95,11 +272,6 @@ export const Dashboard = () => {
                 }}
               />
             )}
-
-            {/* <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
-              </div>
-              <DataTable data={data} /> */}
           </div>
         </div>
       </div>
