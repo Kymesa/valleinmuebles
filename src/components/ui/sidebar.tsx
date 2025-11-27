@@ -504,7 +504,7 @@ function SidebarMenuButton({
   variant = "default",
   size = "default",
   tooltip,
-  className = "hover:text-white text-[#171433] hover:rounded-md  hover:bg-[#7168D3] hover:shadow-md hover:shadow-indigo-500/40",
+  className = "hover:text-white text-[#171433] hover:rounded-md  hover:bg-[#7168D3] hover:shadow-md hover:shadow-indigo-500/40 ",
   ...props
 }: React.ComponentProps<"button"> & {
   asChild?: boolean;

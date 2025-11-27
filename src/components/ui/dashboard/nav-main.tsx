@@ -29,7 +29,7 @@ export function NavMain({
             {profile?.user_type_id === 2 || profile?.user_type_id === 3 ? (
               <SidebarMenuButton
                 tooltip="Quick Create"
-                className="bg-[#7168D3] text-primary-foreground hover:bg-[#7168D3] hover:text-primary-foreground active:bg-[#7168D3] active:text-primary-foreground min-w-8 shadow-md shadow-indigo-500/40 duration-200 h-9 ease-linear cursor-pointer "
+                className="bg-[#7168D3] text-primary-foreground hover:bg-[#7168D3] hover:text-primary-foreground active:bg-[#7168D3] active:text-primary-foreground min-w-8 shadow-md shadow-indigo-500/40 duration-200 h-10 ease-linear cursor-pointer "
               >
                 <NavLink
                   to={"/create-post"}
