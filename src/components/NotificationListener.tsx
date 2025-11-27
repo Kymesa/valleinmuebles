@@ -26,30 +26,10 @@ export const NotificationListener = () => {
       )
       .subscribe();
 
-    const propertyChannel = supabase
-      .channel("public:properties")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "properties",
-        },
-        (payload) => {
-          if (payload.new) {
-            if (payload.new.user_id !== profile.id) {
-              toasts(payload.new.title, "Nueva propiedad publicada");
-            }
-          }
-        }
-      )
-      .subscribe();
-
     return () => {
       supabase.removeChannel(messageChannel);
-      supabase.removeChannel(propertyChannel);
     };
   }, [profile]);
 
-  return null; // This component doesn't render anything visible
+  return null;
 };
