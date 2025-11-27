@@ -55,7 +55,7 @@ export const SectionCards = ({ post, profile, favorites }: any) => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 px-4  *:data-[slot=card]:shadow-[1px] *:data-[slot=card]:bg-[#7168D3]/10 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4 rounded-md  border-none">
+    <div className="grid grid-cols-1 gap-4 px-4  *:data-[slot=card]:shadow-[1px] *:data-[slot=card]:bg-[#7168D3]/10 lg:px-0 @lg/main:grid-cols-2 @5xl/main:grid-cols-4 rounded-md  border-none">
       {post?.map((property) => (
         <Card
           key={property.id}
@@ -64,19 +64,18 @@ export const SectionCards = ({ post, profile, favorites }: any) => {
           className=" border-none  rounded-md w-fit transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:-translate-x-[5px] hover:-translate-y-[5px]"
         >
           <div className="relative -translate-y-6">
-            <Carousel3D
-              images={property.images}
-              alt={property.title}
-            />
-            <Badge className="text-[10px] absolute -top-2 left-2 px-3 py-1  bg-[#7168D3] z-40">
-              {property.operation_type_id.name}
-            </Badge>
+            <Carousel3D images={property.images} alt={property.title} />
           </div>
 
           <CardHeader className="-translate-y-8">
-            <CardTitle className="text-[14px] font-bold">
-              {property.title}
-            </CardTitle>
+            <div className="flex flex-row items-center justify-between">
+              <CardTitle className="text-[14px] font-bold">
+                {property.title}
+              </CardTitle>
+              <Badge className="text-[10px] px-3 py-1  bg-[#7168D3] z-40">
+                {property.operation_type_id.name}
+              </Badge>
+            </div>
             <CardDescription className="text-[12px] text-muted-foreground line-clamp-2">
               {property.description}
             </CardDescription>
@@ -118,11 +117,15 @@ export const SectionCards = ({ post, profile, favorites }: any) => {
                 <Badge className="text-[10px] px-3 py-1 mt-2 bg-[#7168D3]">
                   💰 ${property.price.toLocaleString("es-CO")}
                 </Badge>
-                {property.distance !== null && property.distance !== undefined && (
-                  <Badge variant="outline" className="text-[10px] px-3 py-1 mt-2 ml-2">
-                    📍 {property.distance.toFixed(1)} km
-                  </Badge>
-                )}
+                {property.distance !== null &&
+                  property.distance !== undefined && (
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] px-3 py-1 mt-2 ml-2"
+                    >
+                      📍 {property.distance.toFixed(1)} km
+                    </Badge>
+                  )}
                 <div onClick={() => handleContact(property)}>
                   <Badge className="text-[10px] px-2 py-1 bg-[#7168D3] cursor-pointer hover:bg-[#5d57b5] transition-colors">
                     Contactar {property.user_type?.name || ""} 💬
