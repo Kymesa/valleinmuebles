@@ -33,6 +33,8 @@ const LocationMarker = ({ onLocationSelect, position, setPosition }: any) => {
   return position === null ? null : <Marker position={position}></Marker>;
 };
 
+import { useGeolocated } from "react-geolocated";
+
 export const LocationPicker = ({
   onLocationSelect,
   initialLat,
@@ -41,17 +43,15 @@ export const LocationPicker = ({
   const [position, setPosition] = useState<L.LatLng | null>(
     initialLat && initialLng ? new L.LatLng(initialLat, initialLng) : null
   );
-  const [userLocation, setUserLocation] = useState<L.LatLng | null>(null);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        setUserLocation(
-          new L.LatLng(pos.coords.latitude, pos.coords.longitude)
-        );
-      });
-    }
-  }, []);
+  const { coords } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    userDecisionTimeout: 5000,
+  });
+
+  const userLocation = coords ? new L.LatLng(coords.latitude, coords.longitude) : null;
 
   const center = userLocation || new L.LatLng(10.46314, -73.25322); // Default to Valledupar
 

@@ -2092,6 +2092,11 @@ react-dom@^19.1.1:
   dependencies:
     scheduler "^0.27.0"
 
+react-geolocated@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/react-geolocated/-/react-geolocated-4.4.0.tgz#c3aa94a32e89e355c1eba81d8da4874a1038c852"
+  integrity sha512-FkNa2O6AhFYblK3tXEnmhqiubvjuMuiiDd2Semfw16eSNwX5OqB91+0HP4iyHn+ciGoFuK4yVGJ9fHQUlhz/8g==
+
 react-is@^16.13.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"

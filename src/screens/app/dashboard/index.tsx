@@ -18,6 +18,7 @@ import {
 import { useNavigate } from "react-router";
 import { toasts } from "@/components/ui/toast";
 import { Filters } from "@/components/ui/dashboard/filters";
+import { useGeolocated } from "react-geolocated";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -25,7 +26,16 @@ export const Dashboard = () => {
   const [loadingPost, setLoadingPost] = useState(false);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [post, setPost] = useState([]);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+    useGeolocated({
+      positionOptions: {
+        enableHighAccuracy: true,
+      },
+      userDecisionTimeout: 5000,
+    });
+
+  const userLocation = coords ? { lat: coords.latitude, lng: coords.longitude } : null;
 
   const [filters, setFilters] = useState({
     propertyType: "all",
@@ -46,63 +56,6 @@ export const Dashboard = () => {
       if (ot) setOperationTypes(ot);
     };
     fetchTypes();
-  }, []);
-
-  // Get user location with retry logic
-  const getUserLocation = () => {
-    if (!navigator.geolocation) {
-      toasts("Geolocalización no soportada en este navegador.");
-      return;
-    }
-
-    const optionsHighAccuracy = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0,
-    };
-
-    const optionsLowAccuracy = {
-      enableHighAccuracy: false,
-      timeout: 10000,
-      maximumAge: 30000, // Accept cached location up to 30s old
-    };
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-      },
-      (error) => {
-        console.warn("High accuracy location failed, retrying with low accuracy...", error);
-        // Retry with low accuracy
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            setUserLocation({
-              lat: position.coords.latitude,
-              lng: position.coords.longitude,
-            });
-          },
-          (error2) => {
-            console.error("Location error:", error2);
-            let msg = "No se pudo obtener tu ubicación.";
-            if (error2.code === 1) msg = "Permiso de ubicación denegado.";
-            if (error2.code === 2) msg = "Ubicación no disponible (intenta moverte o conectar a WiFi).";
-            if (error2.code === 3) msg = "Tiempo de espera agotado al obtener ubicación.";
-
-            toasts(msg);
-            setFilters((prev) => ({ ...prev, nearMe: false }));
-          },
-          optionsLowAccuracy
-        );
-      },
-      optionsHighAccuracy
-    );
-  };
-
-  useEffect(() => {
-    getUserLocation();
   }, []);
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -181,13 +134,20 @@ export const Dashboard = () => {
     if (userLocation) {
       getPosts();
     }
-  }, [userLocation]);
+  }, [userLocation?.lat, userLocation?.lng]);
 
   // Trigger search when 'Near Me' filter changes
   useEffect(() => {
     if (filters.nearMe) {
-      if (!userLocation) {
-        getUserLocation();
+      if (!isGeolocationAvailable) {
+        toasts("Tu navegador no soporta geolocalización.");
+        setFilters(prev => ({ ...prev, nearMe: false }));
+      } else if (!isGeolocationEnabled) {
+        toasts("Por favor habilita la ubicación para usar esta función.");
+        setFilters(prev => ({ ...prev, nearMe: false }));
+      } else if (!userLocation) {
+        // Waiting for location...
+        // The userLocation useEffect will trigger getPosts when it arrives
       } else {
         getPosts();
       }
@@ -195,7 +155,7 @@ export const Dashboard = () => {
       // If turned off, re-fetch to show all
       getPosts();
     }
-  }, [filters.nearMe]);
+  }, [filters.nearMe, isGeolocationAvailable, isGeolocationEnabled]);
 
 
   const addFavorites = async (property) => {

@@ -20,6 +20,7 @@ import { IconDelete } from "@/assets/icons/IconDelete";
 import { useNavigate } from "react-router";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
+import { Carousel3D } from "@/components/ui/carousel-3d";
 
 export const SectionCards = ({ post, profile, favorites }: any) => {
   const navigate = useNavigate();
@@ -62,13 +63,12 @@ export const SectionCards = ({ post, profile, favorites }: any) => {
           style={{ backgroundColor: "white" }}
           className=" border-none  rounded-md w-fit transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:-translate-x-[5px] hover:-translate-y-[5px]"
         >
-          <div className="relative h-48 w-[300px] rounded-md">
-            <img
-              src={property.images}
+          <div className="relative -translate-y-6">
+            <Carousel3D
+              images={property.images}
               alt={property.title}
-              className="h-full w-full object-cover -translate-y-6 rounded-md"
             />
-            <Badge className="text-[10px] absolute -top-2 left-2 px-3 py-1  bg-[#7168D3]">
+            <Badge className="text-[10px] absolute -top-2 left-2 px-3 py-1  bg-[#7168D3] z-40">
               {property.operation_type_id.name}
             </Badge>
           </div>
