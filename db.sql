@@ -12,6 +12,39 @@ CREATE TABLE public.agency_profiles (
   CONSTRAINT agency_profiles_pkey PRIMARY KEY (id),
   CONSTRAINT agency_profiles_id_fkey FOREIGN KEY (id) REFERENCES public.users_extended(id)
 );
+CREATE TABLE public.chats (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  property_id uuid NOT NULL,
+  buyer_id uuid NOT NULL,
+  seller_id uuid NOT NULL,
+  topic text NOT NULL,
+  last_message_at timestamp with time zone DEFAULT now(),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT chats_pkey PRIMARY KEY (id),
+  CONSTRAINT chats_property_id_fkey FOREIGN KEY (property_id) REFERENCES public.properties(id),
+  CONSTRAINT chats_buyer_id_fkey FOREIGN KEY (buyer_id) REFERENCES public.users_extended(id),
+  CONSTRAINT chats_seller_id_fkey FOREIGN KEY (seller_id) REFERENCES public.users_extended(id)
+);
+CREATE TABLE public.favorites (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  property_id uuid NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT favorites_pkey PRIMARY KEY (id),
+  CONSTRAINT favorites_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users_extended(id),
+  CONSTRAINT favorites_property_id_fkey FOREIGN KEY (property_id) REFERENCES public.properties(id)
+);
+CREATE TABLE public.messages (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  chat_id uuid NOT NULL,
+  sender_id uuid NOT NULL,
+  content text NOT NULL,
+  is_read boolean DEFAULT false,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT messages_pkey PRIMARY KEY (id),
+  CONSTRAINT messages_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES public.users_extended(id)
+);
 CREATE TABLE public.operation_type (
   id integer NOT NULL DEFAULT nextval('operation_type_id_seq'::regclass),
   name text NOT NULL UNIQUE,

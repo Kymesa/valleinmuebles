@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 
-export const toasts = (descripcion) =>
-  toast("Notificacion", {
+export const toasts = (descripcion, title?: string) =>
+  toast(title ?? "Notificacion", {
     description: descripcion,
     action: {
       label: "Entendido",

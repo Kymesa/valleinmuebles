@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/ui/dashboard/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Outlet } from "react-router";
+import { NotificationListener } from "@/components/NotificationListener";
 
 export const Layout = () => {
   return (
@@ -12,6 +13,7 @@ export const Layout = () => {
         } as React.CSSProperties
       }
     >
+      <NotificationListener />
       <AppSidebar variant="inset" />
       <SidebarInset>
         <Outlet />
