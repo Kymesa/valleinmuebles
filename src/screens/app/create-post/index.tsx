@@ -33,7 +33,7 @@ export const CreatePost = () => {
   const navigate = useNavigate();
   const [tabs, setTabs] = useState("information_basic");
   const [loading, setLoading] = useState(false);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imageFile, setImageFile] = useState(null);
 
   const [dataOperationType, setDataOperationType] = useState([]);
   const [dataPropertyType, setDataPropertyType] = useState([]);
@@ -58,21 +58,11 @@ export const CreatePost = () => {
   });
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files || []) as File[];
+    const file = e.target.files[0];
 
-    if (files.length > 0) {
-      // Limit to 10 images
-      if (files.length > 10) {
-        toasts("⚠️ Máximo 10 imágenes permitidas");
-        setImageFiles(files.slice(0, 10));
-      } else {
-        setImageFiles(files);
-      }
+    if (file) {
+      setImageFile(e.target.files[0]);
     }
-  };
-
-  const removeImage = (index: number) => {
-    setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
   const getNeedInformatioCreatePost = async () => {
     setLoading(true);
@@ -94,28 +84,25 @@ export const CreatePost = () => {
   const creatPost = async () => {
     setLoading(true);
     try {
-      if (imageFiles.length === 0) {
+      if (!imageFile) {
         setLoading(false);
-        return toasts("❌ Atencion, Selecciona al menos una imagen");
+        return toasts("❌ Atencion, Selecciona una imagen primero ");
       }
 
-      // Upload all images
-      const uploadPromises = imageFiles.map(async (file) => {
-        const fileName = `${Date.now()}_${Math.random()}_${file.name}`;
-        const { error } = await supabase.storage
-          .from("Post")
-          .upload(fileName, file);
+      const fileName = `${Date.now()}_${imageFile.name}`;
 
-        if (error) throw error;
+      const { error } = await supabase.storage
+        .from("Post")
+        .upload(fileName, imageFile);
+      console.log({ error });
+      if (error) {
+        setLoading(false);
+        return toasts("❌ Atencion, Error al subir la imagen");
+      }
 
-        const { data: publicUrlData } = supabase.storage
-          .from("Post")
-          .getPublicUrl(fileName);
-
-        return publicUrlData.publicUrl;
-      });
-
-      const imageUrls = await Promise.all(uploadPromises);
+      const { data: publicUrlData } = supabase.storage
+        .from("Post")
+        .getPublicUrl(fileName);
 
       // Check if essential fields are filled (latitude and longitude are optional but recommended)
       const requiredFields = { ...informationPost };
@@ -129,15 +116,11 @@ export const CreatePost = () => {
 
       await supabase
         .from("properties")
-        .insert([{ ...informationPost, images: imageUrls }])
+        .insert([{ ...informationPost, images: [publicUrlData.publicUrl] }])
         .select();
-
-      toasts("✅ Propiedad creada exitosamente");
       setLoading(false);
       navigate("/post");
     } catch (error) {
-      console.error(error);
-      toasts("❌ Error al crear la propiedad");
       setLoading(false);
     }
   };
@@ -254,7 +237,7 @@ export const CreatePost = () => {
                           defaultValue={
                             profile
                               ? profile[typeClient(profile?.user_type_id)]
-                                ?.email
+                                  ?.email
                               : ""
                           }
                           value={informationPost.contact_email}
@@ -377,51 +360,26 @@ export const CreatePost = () => {
                       <Label>Ubicación del Inmueble</Label>
                       <LocationPicker
                         onLocationSelect={(lat, lng) =>
-                          setInformationPost(prev => ({ ...prev, latitude: lat, longitude: lng }))
+                          setInformationPost((prev) => ({
+                            ...prev,
+                            latitude: lat,
+                            longitude: lng,
+                          }))
                         }
                       />
-                      <p className="text-xs text-muted-foreground">Haz clic en el mapa para seleccionar la ubicación exacta.</p>
+                      <p className="text-xs text-muted-foreground">
+                        Haz clic en el mapa para seleccionar la ubicación
+                        exacta.
+                      </p>
                     </div>
 
-                    <div className="grid mx-6 gap-3 mb-6">
-                      <Label htmlFor="picture">Imágenes del inmueble (máximo 10)</Label>
+                    <div className="grid mx-6 max-w-sm items-center gap-3">
+                      <Label htmlFor="picture">Imagen del inmueble</Label>
                       <Input
                         id="picture"
                         onChange={handleFileChange}
                         type="file"
-                        multiple
-                        accept="image/*"
                       />
-                      <p className="text-xs text-muted-foreground">
-                        Selecciona hasta 10 imágenes para mostrar tu propiedad.
-                      </p>
-
-                      {/* Image Preview Grid */}
-                      {imageFiles.length > 0 && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                          {imageFiles.map((file, index) => (
-                            <div key={index} className="relative group">
-                              <img
-                                src={URL.createObjectURL(file)}
-                                alt={`Preview ${index + 1}`}
-                                className="w-full h-32 object-cover rounded-md border-2 border-gray-200"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => removeImage(index)}
-                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                </svg>
-                              </button>
-                              <div className="absolute bottom-1 left-1 bg-black/50 text-white text-xs px-2 py-1 rounded">
-                                {index + 1}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
                     </div>
 
                     <CardFooter>
