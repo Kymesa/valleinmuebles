@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -51,7 +51,9 @@ export const LocationPicker = ({
     userDecisionTimeout: 5000,
   });
 
-  const userLocation = coords ? new L.LatLng(coords.latitude, coords.longitude) : null;
+  const userLocation = coords
+    ? new L.LatLng(coords.latitude, coords.longitude)
+    : null;
 
   const center = userLocation || new L.LatLng(10.46314, -73.25322); // Default to Valledupar
 

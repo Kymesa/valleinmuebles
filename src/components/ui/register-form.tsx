@@ -8,7 +8,6 @@ import { useState } from "react";
 import { toasts } from "./toast";
 import { RadioGroup, RadioGroupItem } from "./radio-group";
 import { CATALOGS } from "@/constants/catalog";
-const API = import.meta.env.VITE_API;
 
 export const RegisterForm = ({ ...props }: React.ComponentProps<"div">) => {
   const [selectedUserTypeId, setSelectedUserTypeId] = useState(1);
@@ -32,59 +31,40 @@ export const RegisterForm = ({ ...props }: React.ComponentProps<"div">) => {
     setLoading(true);
 
     try {
-      const resp = await fetch(`${API}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
       });
-      const respApi = await resp.json();
 
-      if (respApi?.status === "error") {
-        return toasts(respApi?.message);
+      await supabase.from("users_extended").insert({
+        id: data.user.id,
+        user_type_id: selectedUserTypeId,
+        auth_provider: data.user.app_metadata.provider,
+        profile_completed: false,
+      });
+      localStorage.setItem("@token", "x");
+
+      await supabase
+        .from(CATALOGS.TABLES.PROFILES[selectedUserTypeId])
+        .insert({
+          id: data.user.id,
+          email: data.user.email,
+          full_name: fullName,
+        })
+        .select()
+        .single();
+
+      setLoading(false);
+      setEmail("");
+      setPassword("");
+
+      window.location.reload();
+      if (error) {
+        return toasts("No se pudo resolver tu solicitud");
       }
 
-      if (respApi?.status === "success") {
-        localStorage.setItem("@token", respApi?.access_token);
-
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-
-        await supabase.from("users_extended").insert({
-          id: data.user.id,
-          user_type_id: selectedUserTypeId,
-          auth_provider: data.user.app_metadata.provider,
-          profile_completed: false,
-        });
-
-        await supabase
-          .from(CATALOGS.TABLES.PROFILES[selectedUserTypeId])
-          .insert({
-            id: data.user.id,
-            email: data.user.email,
-            full_name: fullName,
-          })
-          .select()
-          .single();
-
-        setLoading(false);
-        setEmail("");
-        setPassword("");
-
-        window.location.reload();
-        if (error) {
-          return toasts("No se pudo resolver tu solicitud");
-        }
-
-        if (data) {
-          return toasts("Se creo la cuenta correctamente e inicia sesion");
-        }
+      if (data) {
+        return toasts("Se creo la cuenta correctamente e inicia sesion");
       }
     } catch (error) {
       setLoading(false);
