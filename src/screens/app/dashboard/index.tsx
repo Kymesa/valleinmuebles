@@ -35,7 +35,9 @@ export const Dashboard = () => {
       userDecisionTimeout: 5000,
     });
 
-  const userLocation = coords ? { lat: coords.latitude, lng: coords.longitude } : null;
+  const userLocation = coords
+    ? { lat: coords.latitude, lng: coords.longitude }
+    : null;
 
   const [filters, setFilters] = useState({
     propertyType: "all",
@@ -58,17 +60,24 @@ export const Dashboard = () => {
     fetchTypes();
   }, []);
 
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const calculateDistance = (
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ) => {
     if (!lat1 || !lon1 || !lat2 || !lon2) return null;
-    const R = 6371; // Radius of the earth in km
+    const R = 6371;
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c; // Distance in km
+    const d = R * c;
     return d;
   };
 
@@ -107,16 +116,23 @@ export const Dashboard = () => {
 
       if (error) throw error;
 
-      let processedPosts = postData.map(p => {
+      let processedPosts = postData.map((p) => {
         let distance = null;
         if (userLocation && p.latitude && p.longitude) {
-          distance = calculateDistance(userLocation.lat, userLocation.lng, p.latitude, p.longitude);
+          distance = calculateDistance(
+            userLocation.lat,
+            userLocation.lng,
+            p.latitude,
+            p.longitude
+          );
         }
         return { ...p, distance };
       });
 
       if (filters.nearMe && userLocation) {
-        processedPosts = processedPosts.filter(p => p.distance !== null && p.distance <= 50); // Filter within 50km (large perimeter)
+        processedPosts = processedPosts.filter(
+          (p) => p.distance !== null && p.distance <= 50
+        );
         processedPosts.sort((a, b) => (a.distance || 0) - (b.distance || 0));
       }
 
@@ -128,35 +144,28 @@ export const Dashboard = () => {
     }
   };
 
-
-  // Re-fetch when location changes if nearMe is active, or just to update distances
   useEffect(() => {
     if (userLocation) {
       getPosts();
     }
   }, [userLocation?.lat, userLocation?.lng]);
 
-  // Trigger search when 'Near Me' filter changes
   useEffect(() => {
     if (filters.nearMe) {
       if (!isGeolocationAvailable) {
         toasts("Tu navegador no soporta geolocalización.");
-        setFilters(prev => ({ ...prev, nearMe: false }));
+        setFilters((prev) => ({ ...prev, nearMe: false }));
       } else if (!isGeolocationEnabled) {
         toasts("Por favor habilita la ubicación para usar esta función.");
-        setFilters(prev => ({ ...prev, nearMe: false }));
+        setFilters((prev) => ({ ...prev, nearMe: false }));
       } else if (!userLocation) {
-        // Waiting for location...
-        // The userLocation useEffect will trigger getPosts when it arrives
       } else {
         getPosts();
       }
     } else {
-      // If turned off, re-fetch to show all
       getPosts();
     }
   }, [filters.nearMe, isGeolocationAvailable, isGeolocationEnabled]);
-
 
   const addFavorites = async (property) => {
     try {
@@ -188,7 +197,6 @@ export const Dashboard = () => {
       <SiteHeader title="Descubrir" />
       <div className="flex flex-1 flex-col bg-gray-50/50 min-h-screen">
         <div className="@container/main flex flex-1 flex-col gap-2 p-4 lg:p-6">
-
           <Filters
             filters={filters}
             setFilters={setFilters}
@@ -210,17 +218,21 @@ export const Dashboard = () => {
                   </EmptyDescription>
                 </EmptyHeader>
                 <EmptyContent>
-                  <Button onClick={() => {
-                    setFilters({
-                      propertyType: "all",
-                      operationType: "all",
-                      minPrice: "",
-                      maxPrice: "",
-                      city: "",
-                      nearMe: false,
-                    });
-                    getPosts();
-                  }}>Limpiar Filtros</Button>
+                  <Button
+                    onClick={() => {
+                      setFilters({
+                        propertyType: "all",
+                        operationType: "all",
+                        minPrice: "",
+                        maxPrice: "",
+                        city: "",
+                        nearMe: false,
+                      });
+                      getPosts();
+                    }}
+                  >
+                    Limpiar Filtros
+                  </Button>
                 </EmptyContent>
               </Empty>
             ) : (
