@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./card";
 import { Button } from "./button";
 import { Eye, Heart, Home, MapPin } from "lucide-react";
-import { DirectionAwareHover } from "./direction-aware-hover";
 
 export const InfiniteMovingCards = ({
   items,
