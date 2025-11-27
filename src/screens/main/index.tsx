@@ -399,23 +399,27 @@ export const LandingPage = () => {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <Button
-              size="lg"
-              variant="secondary"
-              className="h-12 px-8"
-              onClick={() => navigate("/auth")}
-            >
-              <PointerHighlight>Explorar Propiedades</PointerHighlight>
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-12 px-8 border-white hover:bg-white "
-              onClick={() => navigate("/auth")}
-            >
-              Iniciar Sesión
-            </Button>
+            <PointerHighlight>
+              <Button
+                size="lg"
+                variant="secondary"
+                className="h-12 px-8"
+                onClick={() => navigate("/auth")}
+              >
+                Explorar Propiedades
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </PointerHighlight>
+            <PointerHighlight>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 px-8 border-white hover:bg-white "
+                onClick={() => navigate("/auth")}
+              >
+                Iniciar Sesión
+              </Button>
+            </PointerHighlight>
           </div>
         </div>
       </section>
