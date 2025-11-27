@@ -119,15 +119,11 @@ export const LandingPage = () => {
 
   const navItems = [
     {
-      name: "Features",
+      name: "Novedades",
       link: "#features",
     },
     {
-      name: "Pricing",
-      link: "#pricing",
-    },
-    {
-      name: "Contact",
+      name: "Contactos",
       link: "#contact",
     },
   ];
