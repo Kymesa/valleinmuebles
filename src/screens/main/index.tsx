@@ -78,27 +78,43 @@ export const LandingPage = () => {
   ];
 
   const testimonials = [
-    {
-      quote:
-        "Proceso muy rápido y profesional. La plataforma es fácil de usar y muy intuitiva.",
-      name: "María Rodríguez",
-      designation: "Compradora",
-      src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=3560&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote:
-        "La mejor experiencia en búsqueda de propiedades. El equipo es muy atento y eficiente.",
-      name: "Carlos Vega",
-      designation: "Arrendador",
-      src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      quote: "Ana Martínez",
-      name: "Ana Martínez",
-      designation: "Compradora",
-      src: "https://images.unsplash.com/photo-1623582854588-d60de57fa33f?q=80&w=3540&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  ];
+  {
+    quote:
+      "Encontré la casa perfecta en menos de una semana. Excelente asesoría y fotos muy profesionales.",
+    name: "Laura Gómez",
+    designation: "Casa en venta",
+    src: "https://images.unsplash.com/photo-1522156373667-4c7234bbd804?q=80&w=2000&auto=format&fit=crop"
+  },
+  {
+    quote:
+      "El apartamento que arrendé supera mis expectativas. Todo el proceso fue rápido y seguro.",
+    name: "Daniel Torres",
+    designation: "Apartamento en arriendo",
+    src: "https://images.pexels.com/photos/533157/pexels-photo-533157.jpeg"
+  },
+  {
+    quote:
+      "Gracias a la plataforma pude publicar mi local comercial y lo alquilaron en menos de 10 días.",
+    name: "Sofía Hernández",
+    designation: "Local comercial arrendado",
+    src: "https://images.pexels.com/photos/15105668/pexels-photo-15105668.jpeg"
+  },
+  {
+    quote:
+      "Buscaba un estudio pequeño y moderno, y terminé consiguiendo exactamente lo que quería.",
+    name: "Julián Castillo",
+    designation: "Estudio amoblado",
+    src: "https://img.freepik.com/foto-gratis/oficina-acogedora-hogar-estanterias-luz-natural_23-2151972926.jpg?semt=ais_hybrid&w=740&q=80"
+  },
+  {
+    quote:
+      "Publicar mi finca fue sencillo y recibí varias ofertas en pocos días. La plataforma funciona excelente.",
+    name: "Carolina Ruiz",
+    designation: "Finca en venta",
+    src: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/163102645.jpg?k=1c8623aaae7daa6149ce95f46f06cc71e9d10af4bd731d2d21dfb3c28380099a&o="
+  }
+];
+
 
   const navItems = [
     {
@@ -118,27 +134,27 @@ export const LandingPage = () => {
   const cards = [
     {
       title: "Casas",
-      src: "https://images.unsplash.com/photo-1518710843675-2540dd79065c?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      src: "https://i.pinimg.com/236x/7a/70/11/7a701171c9ae5253f0c5fbbca7e0077b.jpg",
     },
     {
       title: "Rentas",
-      src: "https://images.unsplash.com/photo-1600271772470-bd22a42787b3?q=80&w=3072&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      src: "https://plus.unsplash.com/premium_photo-1683891068536-2467572c9a2b?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
     {
       title: "En venta",
-      src: "https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=3070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      src: "https://images.pexels.com/photos/2119713/pexels-photo-2119713.jpeg",
     },
     {
       title: "Apartamentos",
-      src: "https://images.unsplash.com/photo-1486915309851-b0cc1f8a0084?q=80&w=3387&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      src: "https://plus.unsplash.com/premium_photo-1674676471104-3c4017645e6f?q=80&w=670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     },
     {
       title: "Aparta estudio",
-      src: "https://images.unsplash.com/photo-1507041957456-9c397ce39c97?q=80&w=3456&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      src: "https://blog.jamar.com/wp-content/uploads/FOTO-APARTAESTUDIO-1200x1800.jpg",
     },
     {
       title: "Locales comerciales",
-      src: "https://assets.aceternity.com/the-first-rule.png",
+      src: "https://images.pexels.com/photos/34848153/pexels-photo-34848153.jpeg",
     },
   ];
 
