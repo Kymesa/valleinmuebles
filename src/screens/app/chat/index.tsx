@@ -6,7 +6,7 @@ import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { Button } from "@/components/ui/button";
 
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Send, MessageCircle, Home, RefreshCw } from "lucide-react";
+import { ArrowLeft, Send, MessageCircle, Home } from "lucide-react";
 import { toasts } from "@/components/ui/toast";
 import { SiteHeader } from "@/components/ui/dashboard/site-header";
 
@@ -23,7 +23,6 @@ export const Chat = () => {
   const [otherUser, setOtherUser] = useState(null);
   const [property, setProperty] = useState(null);
   const [chatId, setChatId] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -43,6 +42,47 @@ export const Chat = () => {
       }
     }
   }, [id, propertyId, profile]);
+
+  const addMessage = (newMessage) => {
+    setMessages((currentMessages) => {
+      if (currentMessages.some((msg) => msg.id === newMessage.id)) {
+        return currentMessages;
+      }
+      return [...currentMessages, newMessage];
+    });
+  };
+
+  useEffect(() => {
+    if (!chatId) return;
+
+    console.log("Subscribing to chat:", chatId);
+
+    const channel = supabase
+      .channel(`public:messages:chat_id=eq.${chatId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: `chat_id=eq.${chatId}`,
+        },
+        (payload) => {
+          console.log("New message received via Realtime:", payload.new);
+
+          if (payload.new && payload.new.chat_id === chatId) {
+            addMessage(payload.new);
+          }
+        }
+      )
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [chatId]);
 
   const loadExistingChat = async (chatId) => {
     try {
@@ -194,7 +234,6 @@ export const Chat = () => {
 
         setChatId(newChat.id);
 
-        // Obtener información del otro usuario con perfiles relacionados
         const { data: otherUserData, error: userError } = await supabase
           .from("users_extended")
           .select(
@@ -243,10 +282,8 @@ export const Chat = () => {
     }
   };
 
-  const fetchMessages = async (chatIdParam, showRefresh = false) => {
+  const fetchMessages = async (chatIdParam) => {
     try {
-      if (showRefresh) setRefreshing(true);
-
       const { data, error } = await supabase
         .from("messages")
         .select("*")
@@ -258,14 +295,6 @@ export const Chat = () => {
       setMessages(data || []);
     } catch (error) {
       console.error("Error fetching messages:", error);
-    } finally {
-      if (showRefresh) setRefreshing(false);
-    }
-  };
-
-  const handleRefresh = async () => {
-    if (chatId) {
-      await fetchMessages(chatId, true);
     }
   };
 
@@ -274,17 +303,23 @@ export const Chat = () => {
 
     setSending(true);
     try {
-      const { error } = await supabase.from("messages").insert({
-        chat_id: chatId,
-        sender_id: profile.id,
-        content: message.trim(),
-      });
+      const { data, error } = await supabase
+        .from("messages")
+        .insert({
+          chat_id: chatId,
+          sender_id: profile.id,
+          content: message.trim(),
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
       setMessage("");
 
-      await fetchMessages(chatId);
+      if (data) {
+        addMessage(data);
+      }
     } catch (error) {
       console.error("Error sending message:", error);
       toasts("Error al enviar el mensaje");
@@ -303,7 +338,7 @@ export const Chat = () => {
   if (loading) {
     return <LoadingScreen />;
   }
-  console.log(property);
+
   return (
     <>
       <SiteHeader title="Chat" />
@@ -341,21 +376,6 @@ export const Chat = () => {
                 {property?.title}
               </div>
             </div>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9"
-              onClick={handleRefresh}
-              disabled={refreshing}
-              title="Actualizar mensajes"
-            >
-              <RefreshCw
-                className={`h-5 w-5 text-gray-600 ${
-                  refreshing ? "animate-spin" : ""
-                }`}
-              />
-            </Button>
           </div>
         </div>
 
