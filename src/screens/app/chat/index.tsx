@@ -55,8 +55,6 @@ export const Chat = () => {
   useEffect(() => {
     if (!chatId) return;
 
-    console.log("Subscribing to chat:", chatId);
-
     const channel = supabase
       .channel(`public:messages:chat_id=eq.${chatId}`)
       .on(
@@ -68,8 +66,6 @@ export const Chat = () => {
           filter: `chat_id=eq.${chatId}`,
         },
         (payload) => {
-          console.log("New message received via Realtime:", payload.new);
-
           if (payload.new && payload.new.chat_id === chatId) {
             addMessage(payload.new);
           }
